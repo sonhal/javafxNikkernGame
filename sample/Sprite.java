@@ -3,7 +3,7 @@ package sample;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.shape.Circle;
+
 
 public class Sprite
 {
@@ -21,6 +21,14 @@ public class Sprite
         positionY = 0;
         velocityX = 0;
         velocityY = 0;
+    }
+
+    public double getVelocityX() {
+        return velocityX;
+    }
+
+    public double getVelocityY() {
+        return velocityY;
     }
 
     public void setVelocityX(double velocityX) {
@@ -84,7 +92,7 @@ public class Sprite
     public Rectangle2D getBoundary()
     {
        double test_width = width - 30;
-        double test_height = height -   15;
+       double test_height = height - 15;
        return new Rectangle2D(positionX,positionY,test_width,test_height);
     }
 

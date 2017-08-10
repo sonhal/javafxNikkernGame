@@ -2,6 +2,7 @@ package sample;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -12,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
@@ -27,6 +29,33 @@ import java.util.Iterator;
 
 public class Main extends Application {
 
+
+    public void setup_game(Stage gameStage, Scene scene, Sprite player, ArrayList<Sprite> enemies, IntValue health){
+
+
+        health.value = 5;
+
+        player.setPosition(200, 0);
+
+
+        enemies.clear();
+
+
+        for(int i = 0; i < 15; i++) {
+
+            Sprite enemy = new Sprite();
+            enemy.setImage("cop.png");
+            double px = 350 * Math.random() + 50;
+            double py = 350 * Math.random() + 50;
+            enemy.setPosition(px,py);
+            enemies.add(enemy);
+        }
+
+        gameStage.setScene(scene);
+
+
+    }
+
     @Override
     public void start(Stage gameStage) throws Exception{
 
@@ -40,6 +69,9 @@ public class Main extends Application {
 
         Label text = new Label("You lose!");
         Label header = new Label("Niklas died!");
+        Button replay_button = new Button("Play again");
+
+
         header.setFont(Font.font("Helvetica", FontWeight.BOLD, 24));
         Image losing_image = new Image("player_lose.png");
         ImageView view = new ImageView();
@@ -49,6 +81,7 @@ public class Main extends Application {
         grid.add(text, 1, 2);
         grid.add(view, 1,1);
         grid.add(header, 1,0);
+        grid.add(replay_button, 1,3);
 
 
         Scene lose_scene = new Scene(grid, 300,300);
@@ -60,6 +93,33 @@ public class Main extends Application {
 
         Canvas canvas = new Canvas(1024, 512);
         root.getChildren().add(canvas);
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+
+        Font font = Font.font("Helvetica", FontWeight.BOLD, 24);
+        gc.setFont(font);
+        gc.setFill(Color.GREEN);
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(1);
+
+        Sprite player = new Sprite();
+        player.setImage("player.png");
+        player.setPosition(200, 50);
+        IntValue health = new IntValue(5);
+
+
+        ArrayList<Sprite> enemies = new ArrayList<Sprite>();
+
+        replay_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+
+                setup_game(gameStage,scene, player, enemies, health);
+                replay_button.setText("Clicked");
+
+            }
+        });
+
 
         ArrayList<String> input = new ArrayList<String>();
 
@@ -85,20 +145,7 @@ public class Main extends Application {
                 }
         );
 
-        GraphicsContext gc = canvas.getGraphicsContext2D();
 
-        Font font = Font.font("Helvetica", FontWeight.BOLD, 24);
-        gc.setFont(font);
-        gc.setFill(Color.GREEN);
-        gc.setStroke(Color.BLACK);
-        gc.setLineWidth(1);
-
-        Sprite player = new Sprite();
-        player.setImage("player.png");
-        player.setPosition(200, 0);
-
-
-        ArrayList<Sprite> enemies = new ArrayList<Sprite>();
 
 
         for(int i = 0; i < 15; i++) {
@@ -113,14 +160,21 @@ public class Main extends Application {
 
         LongValue lastNanoTime = new LongValue(System.nanoTime());
 
-        IntValue health = new IntValue(5);
-
-
 
         new AnimationTimer() {
+            int counter = 0;
+            boolean hit = false;
             public void handle(long currentNanoTime) {
                 double elapsedTime = (currentNanoTime - lastNanoTime.value) / 1000000000.0;
                 lastNanoTime.value = currentNanoTime;
+
+                if(counter == 0 && hit){
+                    player.setImage("player.png");
+                    hit = false;
+                }
+                if(hit == true){
+                    counter--;
+                }
 
                 if(health.value < 1){
 
@@ -161,6 +215,7 @@ public class Main extends Application {
                 player.update(elapsedTime);
 
                 Iterator<Sprite> enemyIter = enemies.iterator();
+                Iterator<Sprite> enemyIter2 = enemies.iterator();
                 while (enemyIter.hasNext()) {
 
                     boolean bump_lock = false;
@@ -168,7 +223,28 @@ public class Main extends Application {
                     if (player.intersects(enemy)) {
                         enemyIter.remove();
                         health.value--;
+                        player.setImage("player_hit.png");
+                        hit = true;
+                        counter = 10;
                     }
+
+                   /* while (enemyIter.hasNext()){
+                        if(enemyIter.next() == enemy){
+                            break;
+                        }
+                        else {
+                            if(enemy.intersects(enemyIter.next())){
+                                double new_x = enemy.getVelocityX() * -1 + 5;
+                                double new_y = enemy.getVelocityY() * -1 + 5;
+                                double x = Math.random() * 10;
+                                double y = Math.random() * 10;
+                                enemyIter.next().setPosition(x,y);
+                                enemy.setVelocity(new_x , new_y);
+                                bump_lock = true;
+                            }
+                        }
+
+                    } */
 
 
                     if (enemy.getPositionX() > canvas.getWidth()) {
