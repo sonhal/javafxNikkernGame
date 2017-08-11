@@ -28,8 +28,6 @@ public class GameMusicplayer {
 
     public void play(){
         mediaPlayer.play();
-        mediaPlayer.stop();
-
     }
 
 

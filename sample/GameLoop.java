@@ -1,20 +1,48 @@
 package sample;
 
 import javafx.animation.AnimationTimer;
+import javafx.application.Application;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.stage.Stage;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class GameLoop extends AnimationTimer {
 
-
+    IntValue time_played;
+    Sprite player;
+    GameController mainObject;
     LongValue lastNanoTime;
     IntValue time_counter;
+    IntValue health;
     int counter = 0;
     boolean hit = false;
+    ArrayList<Sprite> enemies;
+    Stage gameStage;
+    Canvas canvas;
+    ArrayList<String> input;
+    GraphicsContext gc;
 
-    public GameLoop(LongValue lastNanoTime, IntValue time_counter) {
+    public GameLoop(GameController mainObject, Stage gameStage, LongValue lastNanoTime,
+                    IntValue time_counter, IntValue health, Sprite player,
+                    IntValue time_played, ArrayList<Sprite> enemies,
+                    Canvas canvas, ArrayList<String> input,
+                    GraphicsContext gc) {
+
         this.lastNanoTime = lastNanoTime;
         this.time_counter = time_counter;
+        this.health = health;
+        this.mainObject = mainObject;
+        this.player = player;
+        this.time_played = time_played;
+        this.enemies = enemies;
+        this.gameStage = gameStage;
+        this.canvas = canvas;
+        this.input = input;
+        this.gc = gc;
 
     }
 
@@ -45,7 +73,7 @@ public class GameLoop extends AnimationTimer {
         }
 
         if(health.value < 1){
-            gameLost(enemies,time_played,gameStage);
+            mainObject.gameLost(this,enemies ,time_played, gameStage);
         }
 
 
@@ -187,4 +215,4 @@ public class GameLoop extends AnimationTimer {
 
     }
 }
-}
+

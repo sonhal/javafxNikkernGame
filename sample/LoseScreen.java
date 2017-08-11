@@ -19,26 +19,15 @@ import java.security.PublicKey;
 
 public class LoseScreen extends Application {
     IntValue time;
-    Main main;
+    GameController main;
+    LoseScreen thisLoseScreen = this;
 
 
-    public LoseScreen(IntValue time, Main main){
+    public LoseScreen(IntValue time, GameController main){
         this.time = time;
         this.main = main;
     }
 
-    public void startNewGame(Stage gameStage){
-
-        try {
-            gameStage.hide();
-            main.start(gameStage);
-            stop();
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void start(Stage gameStage) throws Exception {
@@ -55,6 +44,7 @@ public class LoseScreen extends Application {
         Label text = new Label("You lose!");
         Label header = new Label("Niklas died!");
         Button replay_button = new Button("Play again");
+        Button menu_button = new Button("Menu");
         Label time_label = new Label("Time = " + time.value);
 
 
@@ -64,7 +54,7 @@ public class LoseScreen extends Application {
         view.setImage(losing_image);
 
 
-        grid.add(text, 1, 2);
+        grid.add(menu_button, 1, 2);
         grid.add(view, 1,1);
         grid.add(header, 1,0);
         grid.add(replay_button, 1,3);
@@ -78,7 +68,15 @@ public class LoseScreen extends Application {
         replay_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                startNewGame(gameStage);
+                SceneController.setNewScene(main, gameStage, thisLoseScreen);
+
+            }
+        });
+
+        menu_button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                SceneController.setNewScene(new StartMenu(), gameStage, thisLoseScreen);
 
             }
         });
