@@ -4,12 +4,9 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -26,93 +23,55 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Main extends Application {
+    Main main_obj = this;
+
+    GameMusicplayer backgroundMusicPlayer = new GameMusicplayer("Dynamic-good-electronic-music.mp3");
 
 
-    public void setup_game(Stage gameStage, Scene scene, Sprite player, ArrayList<Sprite> enemies, IntValue health, ArrayList<String> input, IntValue time){
-
-
-        health.value = 5;
-
-        player.setPosition(200, 100);
-        player.setVelocity(0,0);
-        input.clear();
-
-
-
+    public void gameLost(ArrayList<Sprite> enemies, IntValue time_played, Stage gameStage){
         enemies.clear();
+        LoseScreen screen = new LoseScreen(time_played, main_obj);
+        try {
+            gameStage.hide();
+            screen.start(gameStage);
+            stop();
+            //backgroundMusicPlayer.stop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    public ArrayList<Sprite> makeEnemySprites(int amount, String spriteImage){
 
-        for(int i = 0; i < 15; i++) {
+        ArrayList<Sprite> enemies = new ArrayList<Sprite>();
+
+        for(int i = 0; i < amount; i++) {
 
             Sprite enemy = new Sprite();
-            enemy.setImage("cop.png");
-            double px = 350 * Math.random() + 300;
+            enemy.setImage(spriteImage);
+            double px = 450 * Math.random() + 300;
             double py = 350 * Math.random() + 50;
             enemy.setPosition(px,py);
             enemies.add(enemy);
         }
-        time.value = 0;
-
-        gameStage.setScene(scene);
-
-
+        return  enemies;
     }
 
-    public void play_hit_sound(){
-        String musicFileHit = "Cannon-sound-effect.mp3";     // For example
-
-        Media sound_hit = new Media(new File(musicFileHit).toURI().toString());
-        MediaPlayer mediaPlayerHit = new MediaPlayer(sound_hit);
-        mediaPlayerHit.play();
-    }
 
     @Override
     public void start(Stage gameStage) throws Exception{
-
-
-        String musicFile = "Dynamic-good-electronic-music.mp3";
-
-        Media sound = new Media(new File(musicFile).toURI().toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(sound);
-        mediaPlayer.setAutoPlay(true);
+        backgroundMusicPlayer.setAutoRepeat();
+        backgroundMusicPlayer.toggleAutoPlay(true);
 
 
 
 
 
-        gameStage.setTitle("NIkkern i Pikkern - Avoid getting hit!");
-
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        grid.setPadding(new Insets(25, 25, 25, 25));
-
-        Label text = new Label("You lose!");
-        Label header = new Label("Niklas died!");
-        Button replay_button = new Button("Play again");
-        Label time_label = new Label("Time = 0");
-
-
-        header.setFont(Font.font("Helvetica", FontWeight.BOLD, 24));
-        Image losing_image = new Image("player_lose.png");
-        ImageView view = new ImageView();
-        view.setImage(losing_image);
-
-
-        grid.add(text, 1, 2);
-        grid.add(view, 1,1);
-        grid.add(header, 1,0);
-        grid.add(replay_button, 1,3);
-        grid.add(time_label, 1,4);
-
-
-        Scene lose_scene = new Scene(grid, 300,300);
+        gameStage.setTitle("Nikkern i Pikkern - Avoid getting hit!");
 
 
         Group root = new Group();
@@ -137,18 +96,9 @@ public class Main extends Application {
         ArrayList<String> input = new ArrayList<String>();
 
 
-        ArrayList<Sprite> enemies = new ArrayList<Sprite>();
-
         IntValue time_played = new IntValue(0);
 
-        replay_button.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
 
-                setup_game(gameStage,scene, player, enemies, health,input,time_played);
-
-            }
-        });
 
 
 
@@ -175,18 +125,7 @@ public class Main extends Application {
                 }
         );
 
-
-
-
-        for(int i = 0; i < 15; i++) {
-
-            Sprite enemy = new Sprite();
-            enemy.setImage("cop.png");
-            double px = 450 * Math.random() + 300;
-            double py = 350 * Math.random() + 50;
-            enemy.setPosition(px,py);
-            enemies.add(enemy);
-        }
+        ArrayList<Sprite> enemies = makeEnemySprites(15,"cop.png");
 
         LongValue lastNanoTime = new LongValue(System.nanoTime());
         IntValue time_counter = new IntValue(0);
@@ -194,6 +133,8 @@ public class Main extends Application {
         new AnimationTimer() {
             int counter = 0;
             boolean hit = false;
+
+
             public void handle(long currentNanoTime) {
                 double elapsedTime = (currentNanoTime - lastNanoTime.value) / 1000000000.0;
                 lastNanoTime.value = currentNanoTime;
@@ -216,10 +157,7 @@ public class Main extends Application {
                 }
 
                 if(health.value < 1){
-                    time_label.setText("Time: " + time_played.value + " seconds");
-                    gameStage.setScene(lose_scene);
-                    enemies.clear();
-
+                    gameLost(enemies,time_played,gameStage);
                 }
 
 
@@ -243,13 +181,13 @@ public class Main extends Application {
 
 
                     if (input.contains("LEFT"))
-                        player.addVelocity(-250, 0);
+                        player.addVelocity(-550, 0);
                     if (input.contains("RIGHT"))
-                        player.addVelocity(250, 0);
+                        player.addVelocity(550, 0);
                     if (input.contains("UP"))
-                        player.addVelocity(0, -250);
+                        player.addVelocity(0, -550);
                     if (input.contains("DOWN"))
-                        player.addVelocity(0, 250);
+                        player.addVelocity(0, 550);
 
                 }
 
@@ -267,7 +205,8 @@ public class Main extends Application {
                         player.setImage("player_hit.png");
                         hit = true;
                         counter = 10;
-                        play_hit_sound();
+                        GameMusicplayer hitMusicPlayer = new GameMusicplayer("Cannon-sound-effect.mp3");
+                        hitMusicPlayer.play();
                     }
 
                    /* while (enemyIter.hasNext()){
