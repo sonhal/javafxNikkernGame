@@ -18,24 +18,30 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Main extends Application {
 
 
-    public void setup_game(Stage gameStage, Scene scene, Sprite player, ArrayList<Sprite> enemies, IntValue health){
+    public void setup_game(Stage gameStage, Scene scene, Sprite player, ArrayList<Sprite> enemies, IntValue health, ArrayList<String> input, IntValue time){
 
 
         health.value = 5;
 
-        player.setPosition(200, 0);
+        player.setPosition(200, 100);
+        player.setVelocity(0,0);
+        input.clear();
+
 
 
         enemies.clear();
@@ -45,21 +51,41 @@ public class Main extends Application {
 
             Sprite enemy = new Sprite();
             enemy.setImage("cop.png");
-            double px = 350 * Math.random() + 50;
+            double px = 350 * Math.random() + 300;
             double py = 350 * Math.random() + 50;
             enemy.setPosition(px,py);
             enemies.add(enemy);
         }
+        time.value = 0;
 
         gameStage.setScene(scene);
 
 
     }
 
+    public void play_hit_sound(){
+        String musicFileHit = "Cannon-sound-effect.mp3";     // For example
+
+        Media sound_hit = new Media(new File(musicFileHit).toURI().toString());
+        MediaPlayer mediaPlayerHit = new MediaPlayer(sound_hit);
+        mediaPlayerHit.play();
+    }
+
     @Override
     public void start(Stage gameStage) throws Exception{
 
-        gameStage.setTitle("Avoid getting hit!");
+
+        String musicFile = "Dynamic-good-electronic-music.mp3";
+
+        Media sound = new Media(new File(musicFile).toURI().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.setAutoPlay(true);
+
+
+
+
+
+        gameStage.setTitle("NIkkern i Pikkern - Avoid getting hit!");
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -70,6 +96,7 @@ public class Main extends Application {
         Label text = new Label("You lose!");
         Label header = new Label("Niklas died!");
         Button replay_button = new Button("Play again");
+        Label time_label = new Label("Time = 0");
 
 
         header.setFont(Font.font("Helvetica", FontWeight.BOLD, 24));
@@ -82,6 +109,7 @@ public class Main extends Application {
         grid.add(view, 1,1);
         grid.add(header, 1,0);
         grid.add(replay_button, 1,3);
+        grid.add(time_label, 1,4);
 
 
         Scene lose_scene = new Scene(grid, 300,300);
@@ -106,22 +134,24 @@ public class Main extends Application {
         player.setImage("player.png");
         player.setPosition(200, 50);
         IntValue health = new IntValue(5);
+        ArrayList<String> input = new ArrayList<String>();
 
 
         ArrayList<Sprite> enemies = new ArrayList<Sprite>();
+
+        IntValue time_played = new IntValue(0);
 
         replay_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
 
-                setup_game(gameStage,scene, player, enemies, health);
-                replay_button.setText("Clicked");
+                setup_game(gameStage,scene, player, enemies, health,input,time_played);
 
             }
         });
 
 
-        ArrayList<String> input = new ArrayList<String>();
+
 
         scene.setOnKeyPressed(
                 new EventHandler<KeyEvent>() {
@@ -152,14 +182,14 @@ public class Main extends Application {
 
             Sprite enemy = new Sprite();
             enemy.setImage("cop.png");
-            double px = 350 * Math.random() + 50;
+            double px = 450 * Math.random() + 300;
             double py = 350 * Math.random() + 50;
             enemy.setPosition(px,py);
             enemies.add(enemy);
         }
 
         LongValue lastNanoTime = new LongValue(System.nanoTime());
-
+        IntValue time_counter = new IntValue(0);
 
         new AnimationTimer() {
             int counter = 0;
@@ -167,6 +197,15 @@ public class Main extends Application {
             public void handle(long currentNanoTime) {
                 double elapsedTime = (currentNanoTime - lastNanoTime.value) / 1000000000.0;
                 lastNanoTime.value = currentNanoTime;
+
+                if(time_counter.value >= 50 && health.value > 0){
+                    time_played.value++;
+                    time_counter.value = 0;
+                }
+
+                time_counter.value++;
+
+
 
                 if(counter == 0 && hit){
                     player.setImage("player.png");
@@ -177,8 +216,10 @@ public class Main extends Application {
                 }
 
                 if(health.value < 1){
-
+                    time_label.setText("Time: " + time_played.value + " seconds");
                     gameStage.setScene(lose_scene);
+                    enemies.clear();
+
                 }
 
 
@@ -202,13 +243,13 @@ public class Main extends Application {
 
 
                     if (input.contains("LEFT"))
-                        player.addVelocity(-150, 0);
+                        player.addVelocity(-250, 0);
                     if (input.contains("RIGHT"))
-                        player.addVelocity(150, 0);
+                        player.addVelocity(250, 0);
                     if (input.contains("UP"))
-                        player.addVelocity(0, -150);
+                        player.addVelocity(0, -250);
                     if (input.contains("DOWN"))
-                        player.addVelocity(0, 150);
+                        player.addVelocity(0, 250);
 
                 }
 
@@ -226,6 +267,7 @@ public class Main extends Application {
                         player.setImage("player_hit.png");
                         hit = true;
                         counter = 10;
+                        play_hit_sound();
                     }
 
                    /* while (enemyIter.hasNext()){
@@ -248,19 +290,19 @@ public class Main extends Application {
 
 
                     if (enemy.getPositionX() > canvas.getWidth()) {
-                        enemy.setVelocityX(-10);
+                        enemy.setVelocityX(-50);
                         bump_lock = true;
                     }
                     if (enemy.getPositionY() > canvas.getHeight()) {
-                        enemy.setVelocityY(-10);
+                        enemy.setVelocityY(-50);
                         bump_lock = true;
                     }
                     if (enemy.getPositionX() < 0) {
-                        enemy.setVelocityX(10);
+                        enemy.setVelocityX(50);
                         bump_lock = true;
                     }
                     if (enemy.getPositionY() < 0) {
-                        enemy.setVelocityY(10);
+                        enemy.setVelocityY(50);
                         bump_lock = true;
                     }
 
@@ -272,20 +314,20 @@ public class Main extends Application {
                         if(chance > 5){
 
                             if(chance2 > 5) {
-                                enemy.addVelocity(5,5);
+                                enemy.addVelocity(30,30);
                             }
                             else {
-                                enemy.addVelocity(-5,5);
+                                enemy.addVelocity(-30,30);
                             }
 
 
                         }
                         else {
                             if(chance2 < 5) {
-                                enemy.addVelocity(5,-5);
+                                enemy.addVelocity(30,-30);
                             }
                             else {
-                                enemy.addVelocity(-5,-5);
+                                enemy.addVelocity(-30,-30);
                             }
                         }
 
@@ -311,6 +353,10 @@ public class Main extends Application {
                 String pointsText = "Health: " + health.value;
                 gc.fillText(pointsText,360, 36);
                 gc.strokeText(pointsText,360,36);
+
+                String timeText = "Time: " + time_played.value;
+                gc.fillText(timeText,560, 36);
+                gc.strokeText(timeText,560,36);
 
             }
         }.start();
