@@ -21,7 +21,7 @@ import javafx.stage.Stage;
 
 public class StartMenu extends Application {
 
-
+StartMenu baseObj = this;
 
     public void startNewGame(Stage gameStage){
         GameController game = new GameController();
@@ -103,6 +103,15 @@ public class StartMenu extends Application {
             @Override
             public void handle(ActionEvent event) {
                 startNewGame(primaryStage);
+
+            }
+        });
+
+        scoreboardButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                Scoreboard scoreboard = new Scoreboard();
+                SceneController.setNewScene(scoreboard,primaryStage,baseObj);
 
             }
         });

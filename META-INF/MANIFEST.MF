@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: sample.Main
+Include-Resource: Cannon-sound-effect.mp3
+Include-Resource: Dynamic-good-electronic-music.mp3
