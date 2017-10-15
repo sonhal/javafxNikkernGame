@@ -22,10 +22,19 @@ import javafx.stage.Stage;
 public class StartMenu extends Application {
 
 StartMenu baseObj = this;
+String playername = "Player";
+
+    public void setPlayername(String p){
+        playername = p;
+    }
+
+    public void getPlayername(String p){
+        playername = p;
+    }
 
     public void startNewGame(Stage gameStage){
         GameController game = new GameController();
-
+        game.setPlayerName(playername);
         try {
             gameStage.hide();
             game.start(gameStage);
@@ -52,10 +61,12 @@ StartMenu baseObj = this;
         Label text = new Label("Game objectives:");
         Text texts = new Text("Stay alive as long as possible! \nDont let the police get you!\n");
         Label header = new Label("Nikkern i Pikkern the Game");
+        Label playerNameLabel = new Label(playername);
         Button playButton = new Button("Play");
         Button scoreboardButton = new Button("Scoreboard");
         texts.setTextAlignment(TextAlignment.CENTER);
         text.setAlignment(Pos.CENTER);
+        playerNameLabel.setTextAlignment(TextAlignment.CENTER);
 
 
         header.setFont(Font.font("Helvetica", FontWeight.BOLD, 24));
@@ -68,6 +79,10 @@ StartMenu baseObj = this;
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
         hBox.getChildren().add(view);
+
+        HBox hBoxPlayerLabel = new HBox();
+        hBox.setAlignment(Pos.CENTER);
+        hBox.getChildren().add(playerNameLabel);
 
         HBox hBoxLahel = new HBox();
         hBoxLahel.setAlignment(Pos.CENTER);
@@ -89,6 +104,7 @@ StartMenu baseObj = this;
 
         grid.add(hBoxText, 0, 4);
         grid.add(hBoxLahel, 0, 3);
+        grid.add(hBoxPlayerLabel, 0, 1);
         grid.add(hBox, 0,2);
         grid.add(header, 0,0);
         grid.add(hBoxStart, 0,5);
@@ -111,6 +127,7 @@ StartMenu baseObj = this;
             @Override
             public void handle(ActionEvent event) {
                 Scoreboard scoreboard = new Scoreboard();
+                scoreboard.setPlayerName(playername);
                 SceneController.setNewScene(scoreboard,primaryStage,baseObj);
 
             }

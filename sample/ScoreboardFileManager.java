@@ -1,10 +1,7 @@
 package sample;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 public class ScoreboardFileManager {
     String filename;
@@ -22,16 +19,23 @@ public class ScoreboardFileManager {
             String line;
             int i = 0;
 
-            while((line = inputStream.readLine()) != null || i == 4 ) {
+            while(true) {
+               line = inputStream.readLine();
+                if(line == null){
+                    break;
+                }
 
+               System.out.println(line);
                String[] playerInfo = line.split(",");
-               System.out.print(playerInfo[0]);
-                System.out.print(line);
-               scoreboard[i][0] = playerInfo[0];
+
+                System.out.println(line);
+
+                scoreboard[i][0] = playerInfo[0];
                 scoreboard[i][1] = playerInfo[1];
                 i++;
 
             }
+            System.out.println("scorebord " + scoreboard[0][0]);
             return  scoreboard;
 
         }
@@ -41,6 +45,7 @@ public class ScoreboardFileManager {
         try (BufferedWriter outStream = new BufferedWriter(new FileWriter(filename))) {
             //ArrayList<String> scoreboard = new ArrayList<>();
             for(String line : scores) {
+                System.out.println("Writing line: " + line);
                 outStream.write(line);
                 outStream.newLine();
             }
@@ -49,21 +54,45 @@ public class ScoreboardFileManager {
 
     private String[][] updateScoreBoard(String[] newScore) throws IOException {
        String[][] scoreboard = getScoreboard();
+       String[] swap = newScore;
 
+       outerloop:
        for(int  i = 0; i < scoreboard.length; i++) {
-           String[] swap = newScore;
 
-           for(int  j = 0; i < scoreboard.length; i++){
-               if (Integer.parseInt(scoreboard[i][1]) < Integer.parseInt(swap[1])){
-                   String[] oldScore = scoreboard[i];
-                   scoreboard[i] = swap;
+
+           for(int  j = 0; j < scoreboard.length; j++){
+               if(scoreboard[j][0] == null || scoreboard[j][0].isEmpty()){
+                   scoreboard[j] = swap;
+                   break outerloop;
                }
+               if(scoreboard[j][0].equals("null")){
+                   scoreboard[j] = swap;
+                   break outerloop;
+               }
+               if (Integer.parseInt(scoreboard[j][1]) < Integer.parseInt(swap[1])){
+                   String[] oldScore = scoreboard[j];
+                   scoreboard[j] = swap;
+                   swap = oldScore;
+               }
+
            }
 
 
 
        }
-        return scoreboard;
+        ArrayList<String[]> scoreboardList = new ArrayList<>();
+       for(String[] score : scoreboard){
+           if(score[0] != null){
+               scoreboardList.add(score);
+           }
+       }
+        System.out.println(scoreboard[0][0]);
+        String[][] returnArray = new String[scoreboardList.size()][2];
+        for(int i = 0; i < scoreboardList.size(); i++){
+            String[] score = scoreboardList.get(i);
+            returnArray[i] = score;
+        }
+        return returnArray;
     }
 
 
@@ -74,9 +103,11 @@ public class ScoreboardFileManager {
        String[] compactScoreboard = new String[5];
        int i = 0;
        for(String[] score : newScoreboard ){
+           System.out.println(score[0]);
            compactScoreboard[i] = score[0] + "," + score[1];
+           i++;
        }
-
+       System.out.println(compactScoreboard[0] + " " + compactScoreboard[1]);
        writeScoreboard(compactScoreboard);
 
     }

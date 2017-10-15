@@ -1,6 +1,8 @@
 package sample;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -18,16 +20,21 @@ import javafx.stage.Stage;
 
 public class Scoreboard extends Application {
     ScoreboardFileManager scoreboardFile;
+    Scoreboard thisScoreboard = this;
+    String playerName = "Player";
 
     public Scoreboard(){
         scoreboardFile = new ScoreboardFileManager("src/scoreboard.txt");
     }
 
+    public void setPlayerName(String p) {
+        this.playerName = p;
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         String[] s = {"SonGetHal", "100"};
-        scoreboardFile.update(s);
+        //scoreboardFile.update(s);
         String scoreboard = scoreboardFile.getFormatedScoreboard();
 
         primaryStage.setTitle("NIkkern i Pikkern - Avoid getting hit!");
@@ -41,7 +48,7 @@ public class Scoreboard extends Application {
 
         Text texts = new Text(scoreboard);
         Label header = new Label("Scoreboard");
-        Button playButton = new Button("Play");
+        Button playButton = new Button("Menu");
         texts.setTextAlignment(TextAlignment.CENTER);
 
 
@@ -77,6 +84,15 @@ public class Scoreboard extends Application {
         grid.add(header, 0,0);
         grid.add(hBoxStart, 0,5);
 
+        playButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                StartMenu menu = new StartMenu();
+                menu.setPlayername(playerName);
+                SceneController.setNewScene(menu, primaryStage, thisScoreboard);
+
+            }
+        });
 
         Scene lose_scene = new Scene(grid, 400,400);
         primaryStage.setScene(lose_scene);

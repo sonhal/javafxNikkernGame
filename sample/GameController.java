@@ -12,18 +12,30 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class GameController extends Application {
 
 
-
+    String playerName = "PlayerC";
     GameMusicplayer backgroundMusicPlayer = new GameMusicplayer("Dynamic-good-electronic-music.mp3");
 
+    public void setPlayerName(String p){
+        playerName = p;
+    }
 
-    public void gameLost(GameLoop gameLoop, ArrayList<Sprite> enemies, IntValue time_played, Stage gameStage){
+    public void gameLost(GameLoop gameLoop, ArrayList<Sprite> enemies, IntValue time_played, Stage gameStage) throws IOException{
+        String time = String.valueOf(time_played.value);
+
         enemies.clear();
-        LoseScreen screen = new LoseScreen(time_played, this);
+        backgroundMusicPlayer.stop();
+        ScoreboardFileManager scoreboardFile = new ScoreboardFileManager("src/scoreboard.txt");
+        String[] scoreStringArray = {playerName,time};
+
+        scoreboardFile.update(scoreStringArray);
+        LoseScreen screen = new LoseScreen(time_played);
+        screen.setPlayerName(playerName);
         gameLoop.stop();
         SceneController.setNewScene(screen, gameStage, this);
 

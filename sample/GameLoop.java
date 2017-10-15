@@ -7,6 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -73,7 +74,12 @@ public class GameLoop extends AnimationTimer {
         }
 
         if(health.value < 1){
-            mainObject.gameLost(this,enemies ,time_played, gameStage);
+            try {
+                mainObject.gameLost(this,enemies ,time_played, gameStage);
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+
         }
 
 

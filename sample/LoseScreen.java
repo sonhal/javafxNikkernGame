@@ -21,11 +21,14 @@ public class LoseScreen extends Application {
     IntValue time;
     GameController main;
     LoseScreen thisLoseScreen = this;
+    String playerName = "Player";
 
+    public void setPlayerName(String p){
+        playerName = p;
+    }
 
-    public LoseScreen(IntValue time, GameController main){
+    public LoseScreen(IntValue time){
         this.time = time;
-        this.main = main;
     }
 
 
@@ -33,7 +36,7 @@ public class LoseScreen extends Application {
     public void start(Stage gameStage) throws Exception {
 
 
-        gameStage.setTitle("NIkkern i Pikkern - Avoid getting hit!");
+        gameStage.setTitle("Nikkern i Pikkern - Avoid getting hit!");
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -68,7 +71,9 @@ public class LoseScreen extends Application {
         replay_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                SceneController.setNewScene(main, gameStage, thisLoseScreen);
+                GameController newGame = new GameController();
+                newGame.setPlayerName(playerName);
+                SceneController.setNewScene(newGame, gameStage, thisLoseScreen);
 
             }
         });
@@ -76,8 +81,9 @@ public class LoseScreen extends Application {
         menu_button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                SceneController.setNewScene(new StartMenu(), gameStage, thisLoseScreen);
-
+                StartMenu menu = new StartMenu();
+                menu.setPlayername(playerName);
+                SceneController.setNewScene(menu, gameStage, thisLoseScreen);
             }
         });
     }

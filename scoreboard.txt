@@ -1,1 +1,5 @@
-SonGetHal,100
+Sondre1,16
+Sondre,14
+PlayerC,10
+Sondre,10
+Sondre,10
