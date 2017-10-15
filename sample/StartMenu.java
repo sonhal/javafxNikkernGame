@@ -123,6 +123,7 @@ String playername = "Player";
             }
         });
 
+        //Switch to scoreboard
         scoreboardButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
