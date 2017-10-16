@@ -5,7 +5,7 @@ import javafx.application.Application;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.stage.Stage;
-
+import javafx.application.Platform;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,6 +13,8 @@ import java.util.Iterator;
 
 public class GameLoop extends AnimationTimer {
 
+    int x,y;
+    boolean invinsible = false;
     IntValue time_played;
     Sprite player;
     GameController mainObject;
@@ -53,6 +55,9 @@ public class GameLoop extends AnimationTimer {
 
 
     public void handle(long currentNanoTime) {
+        Iterator<Sprite> enemyIter = enemies.iterator();
+        Iterator<Sprite> enemyIter2 = enemies.iterator();
+
         double elapsedTime = (currentNanoTime - lastNanoTime.value) / 1000000000.0;
         lastNanoTime.value = currentNanoTime;
 
@@ -65,11 +70,16 @@ public class GameLoop extends AnimationTimer {
 
 
 
-        if(counter == 0 && hit){
+        if(counter == 10 && hit){
             player.setImage("player.png");
             hit = false;
         }
-        if(hit == true){
+        if(counter == 0){
+            invinsible = false;
+        }
+
+        if(hit == true || invinsible == true){
+
             counter--;
         }
 
@@ -115,18 +125,28 @@ public class GameLoop extends AnimationTimer {
 
         player.update(elapsedTime);
 
-        Iterator<Sprite> enemyIter = enemies.iterator();
-        Iterator<Sprite> enemyIter2 = enemies.iterator();
+
         while (enemyIter.hasNext()) {
 
             boolean bump_lock = false;
             Sprite enemy = enemyIter.next();
-            if (player.intersects(enemy)) {
-                enemyIter.remove();
+            if (player.intersects(enemy) && invinsible == false) {
+                invinsible = true;
+                //enemyIter.remove();
+
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Sprite newEnemy = new Sprite();
+                        newEnemy.setImage("cop.png");
+                        newEnemy.setPosition(enemy.getPositionX(),enemy.getPositionY());
+                        enemies.add(newEnemy);
+                    }
+                });
                 health.value--;
                 player.setImage("player_hit.png");
                 hit = true;
-                counter = 10;
+                counter = 20;
                 GameMusicplayer hitMusicPlayer = new GameMusicplayer("Cannon-sound-effect.mp3");
                 hitMusicPlayer.play();
             }

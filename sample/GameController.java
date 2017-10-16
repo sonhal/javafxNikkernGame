@@ -111,7 +111,7 @@ public class GameController extends Application {
                 }
         );
 
-        ArrayList<Sprite> enemies = makeEnemySprites(10, "cop.png");
+        ArrayList<Sprite> enemies = makeEnemySprites(7, "cop.png");
 
         LongValue lastNanoTime = new LongValue(System.nanoTime());
         IntValue time_counter = new IntValue(0);

@@ -1,5 +1,5 @@
 Sondre,35
 Sondre,26
+Sondre,22
 SONDRE,21
-Sondre,19
 asd,19
