@@ -35,7 +35,6 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
         GetPlayernameScene menu = new GetPlayernameScene();
         menu.start(primaryStage);
     }

@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -18,8 +19,7 @@ import java.util.ArrayList;
 public class GameController extends Application {
 
 
-    String playerName = "PlayerC";
-    GameMusicplayer backgroundMusicPlayer = new GameMusicplayer("Dynamic-good-electronic-music.mp3");
+    String playerName = "Player";
 
     public void setPlayerName(String p){
         playerName = p;
@@ -29,7 +29,7 @@ public class GameController extends Application {
         String time = String.valueOf(time_played.value);
 
         enemies.clear();
-        backgroundMusicPlayer.stop();
+        //backgroundMusicPlayer.stop();
         ScoreboardFileManager scoreboardFile = new ScoreboardFileManager("src/scoreboard.txt");
         String[] scoreStringArray = {playerName,time};
 
@@ -38,7 +38,6 @@ public class GameController extends Application {
         screen.setPlayerName(playerName);
         gameLoop.stop();
         SceneController.setNewScene(screen, gameStage, this);
-
     }
 
     public ArrayList<Sprite> makeEnemySprites(int amount, String spriteImage){
@@ -46,7 +45,6 @@ public class GameController extends Application {
         ArrayList<Sprite> enemies = new ArrayList<Sprite>();
 
         for(int i = 0; i < amount; i++) {
-
             Sprite enemy = new Sprite();
             enemy.setImage(spriteImage);
             double px = 450 * Math.random() + 300;
@@ -60,9 +58,6 @@ public class GameController extends Application {
 
     @Override
     public void start(Stage gameStage) throws Exception {
-        backgroundMusicPlayer.setAutoRepeat();
-        backgroundMusicPlayer.toggleAutoPlay(true);
-
 
         gameStage.setTitle("Nikkern i Pikkern - Avoid getting hit!");
 
@@ -72,8 +67,9 @@ public class GameController extends Application {
         gameStage.setScene(scene);
 
         Canvas canvas = new Canvas(1024, 512);
-        
-        root.getChildren().add(canvas);
+        HBox hbox = new HBox();
+        hbox.getChildren().add(canvas);
+        root.getChildren().add(hbox);
 
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
@@ -115,7 +111,7 @@ public class GameController extends Application {
                 }
         );
 
-        ArrayList<Sprite> enemies = makeEnemySprites(15, "cop.png");
+        ArrayList<Sprite> enemies = makeEnemySprites(10, "cop.png");
 
         LongValue lastNanoTime = new LongValue(System.nanoTime());
         IntValue time_counter = new IntValue(0);
@@ -124,9 +120,7 @@ public class GameController extends Application {
                 time_counter, health, player, time_played, enemies,
                 canvas, input, gc);
 
-
         gameLoop.start();
-
         gameStage.show();
 
     }

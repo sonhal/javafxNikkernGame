@@ -36,6 +36,8 @@ import javafx.stage.Stage;
 
 public class GetPlayernameScene extends Application {
 
+    GameMusicplayer backgroundMusicPlayer = new GameMusicplayer("Dynamic-good-electronic-music.mp3");
+
     GetPlayernameScene baseObj = this;
 
     public void startNewGame(Stage gameStage){
@@ -55,6 +57,8 @@ public class GetPlayernameScene extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        backgroundMusicPlayer.setAutoRepeat();
+        backgroundMusicPlayer.toggleAutoPlay(true);
 
         primaryStage.setTitle("NIkkern i Pikkern - Avoid getting hit!");
 

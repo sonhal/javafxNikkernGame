@@ -1,5 +1,5 @@
-Sondre1,16
-Sondre,14
-PlayerC,10
-Sondre,10
-Sondre,10
+Sondre,35
+Sondre,26
+SONDRE,21
+Sondre,19
+asd,19

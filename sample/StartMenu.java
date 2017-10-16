@@ -21,8 +21,9 @@ import javafx.stage.Stage;
 
 public class StartMenu extends Application {
 
-StartMenu baseObj = this;
-String playername = "Player";
+
+    StartMenu baseObj = this;
+    String playername = "Player";
 
     public void setPlayername(String p){
         playername = p;
@@ -49,6 +50,7 @@ String playername = "Player";
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
 
         primaryStage.setTitle("NIkkern i Pikkern - Avoid getting hit!");
 

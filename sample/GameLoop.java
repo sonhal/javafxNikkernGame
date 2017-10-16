@@ -83,18 +83,18 @@ public class GameLoop extends AnimationTimer {
         }
 
 
-        if (player.getPositionX() > canvas.getWidth()) {
-            player.setVelocityX(-10);
+        if (player.getPositionX() < 0) {
+            player.setVelocityX(50);
 
         }
-        else if (player.getPositionY() > canvas.getHeight()) {
-            player.setVelocityY(-10);
+        else if (player.getPositionY() > canvas.getHeight() - 82) {
+            player.setVelocityY(-50);
         }
-        else if (player.getPositionX() < 0) {
-            player.setVelocityX(10);
+        else if (player.getPositionX() > (canvas.getWidth() - 82) ) {
+            player.setVelocityX(-50);
         }
         else if (player.getPositionY() < 0) {
-            player.setVelocityY(10);
+            player.setVelocityY(50);
         }
         else {
 
@@ -150,11 +150,11 @@ public class GameLoop extends AnimationTimer {
                     } */
 
 
-            if (enemy.getPositionX() > canvas.getWidth()) {
+            if (enemy.getPositionX() > canvas.getWidth() - 80) {
                 enemy.setVelocityX(-50);
                 bump_lock = true;
             }
-            if (enemy.getPositionY() > canvas.getHeight()) {
+            if (enemy.getPositionY() > canvas.getHeight() - 80) {
                 enemy.setVelocityY(-50);
                 bump_lock = true;
             }
