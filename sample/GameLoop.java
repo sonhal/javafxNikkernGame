@@ -126,29 +126,42 @@ public class GameLoop extends AnimationTimer {
 
 
         while (enemyIter.hasNext()) {
-
             boolean bump_lock = false;
             Sprite enemy = enemyIter.next();
+
+            for(Sprite enemy2 : enemies){
+                //Sprite enemy2 = enemyIter2.next();
+                if(enemy2 == enemy){
+                    System.out.println("pass");
+                    continue;
+                }
+                if(enemy.circleIntersects(enemy2)){
+                    System.out.println("HIT------------------------");
+                    enemy.calcCollisionBounce(enemy2);
+                }
+
+            }
             if (player.circleIntersects(enemy) && invinsible == false) {
                 invinsible = true;
                 //enemyIter.remove();
-
+                //player.calcCollisionBounce(enemy);
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
                         Sprite newEnemy = new Sprite();
                         newEnemy.setImage("cop.png");
-                        newEnemy.setPosition(enemy.getPositionX(),enemy.getPositionY());
+                        newEnemy.setPosition(enemy.getPositionX() -110,enemy.getPositionY() - 110);
                         enemies.add(newEnemy);
                     }
                 });
                 health.value--;
                 player.setImage("player_hit.png");
                 hit = true;
-                counter = 20;
+                counter = 30;
                 GameMusicplayer hitMusicPlayer = new GameMusicplayer("Cannon-sound-effect.mp3");
                 hitMusicPlayer.play();
             }
+
 
                    /* while (enemyIter.hasNext()){
                         if(enemyIter.next() == enemy){
@@ -213,10 +226,10 @@ public class GameLoop extends AnimationTimer {
 
 
             }
+
+        }
+        for(Sprite enemy : enemies){
             enemy.update(elapsedTime);
-
-
-
         }
 
 
