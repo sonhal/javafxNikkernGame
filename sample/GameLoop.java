@@ -79,7 +79,6 @@ public class GameLoop extends AnimationTimer {
         }
 
         if(hit == true || invinsible == true){
-
             counter--;
         }
 
