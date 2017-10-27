@@ -129,7 +129,7 @@ public class GameLoop extends AnimationTimer {
 
             boolean bump_lock = false;
             Sprite enemy = enemyIter.next();
-            if (player.intersects(enemy) && invinsible == false) {
+            if (player.circleIntersects(enemy) && invinsible == false) {
                 invinsible = true;
                 //enemyIter.remove();
 

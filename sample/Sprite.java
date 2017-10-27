@@ -3,6 +3,7 @@ package sample;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.shape.Circle;
 
 
 public class Sprite
@@ -96,8 +97,35 @@ public class Sprite
        return new Rectangle2D(positionX,positionY,test_width,test_height);
     }
 
+    public Circle getCircleBoundary(){
+        Circle circle = new Circle();
+        circle.setRadius(50.0f);
+        return circle;
+    }
+
     public boolean intersects(Sprite s)
     {
         return s.getBoundary().intersects( this.getBoundary() );
     }
+
+    public boolean circleIntersects(Sprite otherSprite){
+        if(this.positionX + this.getCircleBoundary().getRadius() + otherSprite.getCircleBoundary().getRadius() > otherSprite.getPositionX()
+                && this.positionX < otherSprite.getPositionX() + this.getCircleBoundary().getRadius() + otherSprite.getCircleBoundary().getRadius()
+                && this.getPositionY() + this.getCircleBoundary().getRadius() + otherSprite.getCircleBoundary().getRadius() > otherSprite.getPositionY()
+                && this.getPositionY() < otherSprite.getPositionY() + this.getCircleBoundary().getRadius() + otherSprite.getCircleBoundary().getRadius())
+        {
+            //AABBs are overlapping
+            double distance = Math.sqrt(
+                    ((this.positionX - otherSprite.getPositionX()) * (this.positionX - otherSprite.getPositionX()))
+            + ((this.getPositionY() - otherSprite.getPositionY()) * (this.getPositionY() - otherSprite.getPositionY()))
+            );
+
+            if (distance < otherSprite.getCircleBoundary().getRadius() + otherSprite.getCircleBoundary().getRadius())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
