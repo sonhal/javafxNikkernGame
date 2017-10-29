@@ -1,5 +1,5 @@
 Sondre,35
 wone,35
-sads,31
-wone,27
-Sondre,26
+no,33
+asdasd,33
+ss,31
