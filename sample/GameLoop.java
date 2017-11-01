@@ -50,17 +50,30 @@ public class GameLoop extends AnimationTimer {
     }
 
     public void checkBoundariesAndKeypress(Sprite sprite, boolean isPlayer){
-        if (sprite.getPositionX() < 0) {
-            sprite.setPosition(10,sprite.getPositionY());
+        if (sprite.getPositionX() < 10) {
+            sprite.setPosition(0,sprite.getPositionY());
         }
-        else if (sprite.getPositionY() > canvas.getHeight() - 82) {
+        if (sprite.getPositionY() > canvas.getHeight() - 82) {
             sprite.setPosition(sprite.getPositionX(),canvas.getHeight() - 92);
         }
-        else if (sprite.getPositionX() > (canvas.getWidth() - 82) ) {
+        if (sprite.getPositionX() > (canvas.getWidth() - 82) ) {
             sprite.setPosition(canvas.getWidth() - 92, sprite.getPositionY());
         }
-        else if (sprite.getPositionY() < 0) {
-            sprite.setPosition(sprite.getPositionX(),10);
+        if (sprite.getPositionY() < 0) {
+            sprite.setPosition(sprite.getPositionX(),5);
+        }
+
+        if(player.getPositionY() < 0 && player.getPositionX() < 0){
+            player.setPosition(10,10);
+        }
+        if(player.getPositionY() > canvas.getHeight() - 80 && player.getPositionX() > canvas.getWidth() - 80){
+            player.setPosition(canvas.getWidth() - 90,canvas.getHeight() - 90);
+        }
+        if(player.getPositionY() > canvas.getHeight() - 80 && player.getPositionX() < 0){
+            player.setPosition(10,canvas.getHeight() - 90);
+        }
+        if(player.getPositionY() < 0 && player.getPositionX() > canvas.getWidth() - 80){
+            player.setPosition(canvas.getWidth() - 90,10);
         }
         else{
             if(isPlayer){
@@ -89,38 +102,37 @@ public class GameLoop extends AnimationTimer {
                 System.out.println("HIT------------------------");
                 enemy.calcCollisionBounce(enemy2);
                 bump_lock = true;
+                enemy.update(.01);
+                enemy2.update(.01);
             }
         }
         return bump_lock;
     }
 
     public void checkEnemyToPlayerCollision(Sprite enemy){
-        if (player.circleIntersects(enemy) && invinsible == false) {
-            invinsible = true;
+        if (player.circleIntersects(enemy)) {
             //enemyIter.remove();
-            player.calcCollisionBounceWithPlayer(enemy);
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    Sprite newEnemy = new Sprite();
-                    newEnemy.setImage("cop.png");
-                    newEnemy.setPosition(enemy.getPositionX() -100,enemy.getPositionY() - 100);
-                    if (player.circleIntersects(enemy)){
-                        player.calcCollisionBounceWithPlayer(newEnemy);
+            enemy.calcCollisionBounceWithPlayer(player);
+            enemy.update(.01);
+            player.update(.01);
+            if(invinsible == false){
+                //health.value--;
+                invinsible = true;
+                /*Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Sprite newEnemy = new Sprite();
+                        newEnemy.setImage("cop.png");
+                        newEnemy.setPosition(enemy.getPositionX() + 100,enemy.getPositionY() - 100);
+                        enemies.add(newEnemy);
                     }
-                    if (player.circleIntersects(enemy)){
-                        enemy.calcCollisionBounceWithPlayer(newEnemy);
-                    }
-
-                    enemies.add(newEnemy);
-                }
-            });
-            health.value--;
-            player.setImage("player_hit.png");
-            hit = true;
-            counter = 30;
-            GameMusicplayer hitMusicPlayer = new GameMusicplayer("Cannon-sound-effect.mp3");
-            hitMusicPlayer.play();
+                });*/
+                player.setImage("player_hit.png");
+                hit = true;
+                counter = 30;
+                GameMusicplayer hitMusicPlayer = new GameMusicplayer("Cannon-sound-effect.mp3");
+                hitMusicPlayer.play();
+            }
         }
     }
 
@@ -160,19 +172,43 @@ public class GameLoop extends AnimationTimer {
             enemy.setVelocityX(-50);
             bump_lock = true;
         }
-        if (enemy.getPositionY() > canvas.getHeight() - 80) {
-            enemy.setPosition(enemy.getPositionX(), canvas.getHeight() - 90);
+        if (enemy.getPositionY() > canvas.getHeight() - 90) {
+            enemy.setPosition(enemy.getPositionX(), canvas.getHeight() - 100);
             enemy.setVelocityY(-50);
             bump_lock = true;
         }
         if (enemy.getPositionX() < 0) {
-            enemy.setPosition(20,enemy.getPositionY());
+            enemy.setPosition(10,enemy.getPositionY());
             enemy.setVelocityX(50);
             bump_lock = true;
         }
         if (enemy.getPositionY() < 0) {
-            enemy.setPosition(enemy.getPositionX(),20);
+            enemy.setPosition(enemy.getPositionX(),10);
             enemy.setVelocityY(50);
+            bump_lock = true;
+        }
+        if(enemy.getPositionY() < 0 && enemy.getPositionX() < 0){
+            enemy.setPosition(10,10);
+            enemy.setVelocityY(50);
+            enemy.setVelocityX(50);
+            bump_lock = true;
+        }
+        if(enemy.getPositionY() > canvas.getHeight() - 80 && enemy.getPositionX() > canvas.getWidth() - 80){
+            enemy.setPosition(canvas.getWidth() - 90,canvas.getHeight() - 90);
+            enemy.setVelocityY(-50);
+            enemy.setVelocityX(-50);
+            bump_lock = true;
+        }
+        if(enemy.getPositionY() > canvas.getHeight() - 80 && enemy.getPositionX() < 0){
+            enemy.setPosition(10,canvas.getHeight() - 90);
+            enemy.setVelocityY(-50);
+            enemy.setVelocityX(50);
+            bump_lock = true;
+        }
+        if(enemy.getPositionY() < 0 && enemy.getPositionX() > canvas.getWidth() - 80){
+            enemy.setPosition(canvas.getWidth() - 90,10);
+            enemy.setVelocityY(50);
+            enemy.setVelocityX(-50);
             bump_lock = true;
         }
         return bump_lock;
@@ -186,13 +222,17 @@ public class GameLoop extends AnimationTimer {
 
             //Check if enemy has collided with another enemy
             //Sets bump_lock to true if so
+
+
+
+
+            bump_lock = checkEnemyBoundaryCollision(enemy,bump_lock);
+
             bump_lock = checkEnemyCollision(enemy);
 
-            checkEnemyToPlayerCollision(enemy);
-
-            checkEnemyBoundaryCollision(enemy,bump_lock);
-
             generateRandomMovmentIfNoCollision(enemy,bump_lock);
+
+            checkEnemyToPlayerCollision(enemy);
 
         }
     }
@@ -238,6 +278,7 @@ public class GameLoop extends AnimationTimer {
             }
 
         }
+
 
 
         checkBoundariesAndKeypress(player,true);

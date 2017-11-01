@@ -81,7 +81,7 @@ public class GameController extends Application {
 
         Sprite player = new Sprite();
         player.setImage("player.png");
-        player.setPosition(200, 50);
+        player.setPosition(0, 0);
         IntValue health = new IntValue(5);
         ArrayList<String> input = new ArrayList<String>();
 

@@ -130,10 +130,29 @@ public class Sprite
     }
 
     public void calcCollisionBounce(Sprite otherSprite){
-        double newVelX1 = (this.getVelocityX() * (this.MASS - otherSprite.MASS) + (2 * otherSprite.MASS * otherSprite.getVelocityX())) / (this.MASS + otherSprite.MASS);
-        double newVelY1 = (this.getVelocityY() * (this.MASS - otherSprite.MASS) + (2 * otherSprite.MASS * otherSprite.getVelocityY())) / (this.MASS + otherSprite.MASS);
-        double newVelX2 = (otherSprite.velocityX * (otherSprite.MASS - this.MASS) + (2 * this.MASS * this.getVelocityX())) / (this.MASS + otherSprite.MASS);
-        double newVelY2 = (otherSprite.velocityY * (otherSprite.MASS - this.MASS) + (2 * this.MASS * this.velocityY)) / (this.MASS + otherSprite.MASS);
+        double otherVX = otherSprite.getVelocityX();
+        double otherVY = otherSprite.getPositionY();
+
+        double thisVX = this.getVelocityX();
+        double thisVY = this.getPositionY();
+
+        /*if(thisVX == 0){
+            thisVX = -10;
+        }
+        if(thisVY == 0){
+            thisVY = -10;
+        }
+        if(otherVX == 0){
+            otherVX = -10;
+        }
+        if(otherVY == 0){
+            otherVY = -10;
+        }*/
+
+        double newVelX1 = (thisVX * (this.MASS - otherSprite.MASS) + (2 * otherSprite.MASS * otherVX)) / (this.MASS + otherSprite.MASS);
+        double newVelY1 = (thisVY * (this.MASS - otherSprite.MASS) + (2 * otherSprite.MASS * otherVY)) / (this.MASS + otherSprite.MASS);
+        double newVelX2 = (otherVX * (otherSprite.MASS - this.MASS) + (2 * this.MASS * thisVX)) / (this.MASS + otherSprite.MASS);
+        double newVelY2 = (otherVY * (otherSprite.MASS - this.MASS) + (2 * this.MASS * thisVY)) / (this.MASS + otherSprite.MASS);
 
         this.setVelocity(newVelX1,newVelY1);
         otherSprite.setVelocity(newVelX2,newVelY2);
@@ -147,20 +166,28 @@ public class Sprite
     }
 
     public void calcCollisionBounceWithPlayer(Sprite otherSprite){
-        //double newVelX1 = (this.getVelocityX() * (this.MASS - otherSprite.MASS) + (2 * otherSprite.MASS * otherSprite.getVelocityX())) / (this.MASS + otherSprite.MASS);
-        //double newVelY1 = (this.getVelocityY() * (this.MASS - otherSprite.MASS) + (2 * otherSprite.MASS * otherSprite.getVelocityY())) / (this.MASS + otherSprite.MASS);
-        double newVelX2 = (otherSprite.velocityX * (otherSprite.MASS - this.MASS) + (2 * this.MASS * this.getVelocityX())) / (this.MASS + otherSprite.MASS);
-        double newVelY2 = (otherSprite.velocityY * (otherSprite.MASS - this.MASS) + (2 * this.MASS * this.velocityY)) / (this.MASS + otherSprite.MASS);
+        double playerVX = otherSprite.getVelocityX();
+        double playerVY = otherSprite.getPositionY();
+        if(otherSprite.getVelocityX() == 0){
+            playerVX = this.getVelocityX() * - 1;
+        }
+        if(otherSprite.getVelocityY() == 0){
+            playerVY = this.getVelocityX() * - 1;
+        }
+        double newVelX1 = (this.getVelocityX() * (this.MASS - otherSprite.MASS) + (2 * otherSprite.MASS * playerVX)) / (this.MASS + otherSprite.MASS);
+        double newVelY1 = (this.getVelocityY() * (this.MASS - otherSprite.MASS) + (2 * otherSprite.MASS * playerVY)) / (this.MASS + otherSprite.MASS);
+        //double newVelX2 = (otherSprite.velocityX * (otherSprite.MASS - this.MASS) + (2 * this.MASS * this.getVelocityX())) / (this.MASS + otherSprite.MASS);
+        //double newVelY2 = (otherSprite.velocityY * (otherSprite.MASS - this.MASS) + (2 * this.MASS * this.velocityY)) / (this.MASS + otherSprite.MASS);
 
-        //this.setVelocity(newVelX1,newVelY1);
-        otherSprite.setVelocity(newVelX2,newVelY2);
-        //double newX = this.getPositionX() + (newVelX1 / 100);
-        //double newY = this.getPositionY() + (newVelY1 / 100);
-        double newX2 = otherSprite.getPositionX() + (newVelX2 / 50);
-        double newY2 = otherSprite.getPositionY() + (newVelY2 / 50);
+        this.setVelocity(newVelX1,newVelY1);
+        //otherSprite.setVelocity(newVelX2,newVelY2);
+        double newX = this.getPositionX() + (newVelX1 / 50);
+        double newY = this.getPositionY() + (newVelY1 / 50);
+        //double newX2 = otherSprite.getPositionX() + (newVelX2 / 50);
+        //double newY2 = otherSprite.getPositionY() + (newVelY2 / 50);
 
-        //this.setPosition(newX, newY);
-        otherSprite.setPosition(newX2,newY2 );
+        this.setPosition(newX, newY);
+        //otherSprite.setPosition(newX2,newY2 );
     }
 
 }
